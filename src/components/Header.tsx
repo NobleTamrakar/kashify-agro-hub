@@ -2,9 +2,10 @@ import { ShoppingCart } from 'lucide-react';
 
 interface HeaderProps {
   cartCount: number;
+  onCartClick: () => void;
 }
 
-export const Header = ({ cartCount }: HeaderProps) => {
+export const Header = ({ cartCount, onCartClick }: HeaderProps) => {
   return (
     <header className="relative">
       {/* Kashify Brand */}
@@ -20,11 +21,14 @@ export const Header = ({ cartCount }: HeaderProps) => {
       {/* Cart Icon */}
       <div className="absolute top-8 right-8">
         <div className="relative">
-          <button className="p-3 bg-card border border-border rounded-xl hover:bg-accent transition-colors">
+          <button 
+            onClick={onCartClick}
+            className="p-3 bg-card border border-border rounded-xl hover:bg-accent transition-all duration-300 hover:shadow-[var(--shadow-neon)] hover:scale-105"
+          >
             <ShoppingCart className="w-6 h-6 text-primary" />
           </button>
           {cartCount > 0 && (
-            <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
+            <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse shadow-[var(--glow-intense)]">
               {cartCount}
             </span>
           )}

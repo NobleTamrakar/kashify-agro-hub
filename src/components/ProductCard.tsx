@@ -4,7 +4,9 @@ import { Heart, ShoppingCart } from 'lucide-react';
 interface Product {
   id: string;
   name: string;
-  price: number;
+  buyPrice: number;
+  rentPrice: number;
+  description: string;
   image: string;
   category: string;
 }
@@ -46,15 +48,30 @@ export const ProductCard = ({ product, onBuy, onRent, onAddToCart }: ProductCard
 
       {/* Product Info */}
       <div className="space-y-3">
-        <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors">
+        <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors line-clamp-2">
           {product.name}
         </h3>
         
-        <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-neon">₹{product.price.toLocaleString()}</span>
-          <span className="text-sm text-muted-foreground px-2 py-1 bg-muted rounded-lg">
-            {product.category}
-          </span>
+        <p className="text-sm text-muted-foreground line-clamp-2 min-h-[2.5rem]">
+          {product.description}
+        </p>
+        
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold text-neon">₹{product.buyPrice.toLocaleString()}</span>
+                <span className="text-xs text-muted-foreground">Buy</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-primary">₹{product.rentPrice}/day</span>
+                <span className="text-xs text-muted-foreground">Rent</span>
+              </div>
+            </div>
+            <span className="text-xs text-muted-foreground px-2 py-1 bg-muted rounded-lg">
+              {product.category}
+            </span>
+          </div>
         </div>
 
         {/* Action Buttons */}

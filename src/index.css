@@ -166,4 +166,12 @@ All colors MUST be HSL.
   .heart-favorite.active {
     @apply text-red-500;
   }
+  
+  /* Utility classes */
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
 }
