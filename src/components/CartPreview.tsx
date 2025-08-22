@@ -6,16 +6,18 @@ interface CartItem {
   id: string;
   name: string;
   buyPrice: number;
+  rentPrice: number;
   image: string;
   quantity: number;
+  type: 'buy' | 'rent';
 }
 
 interface CartPreviewProps {
   isOpen: boolean;
   onClose: () => void;
   cartItems: CartItem[];
-  onRemoveItem: (productId: string) => void;
-  onUpdateQuantity: (productId: string, quantity: number) => void;
+  onRemoveItem: (productId: string, type: 'buy' | 'rent') => void;
+  onUpdateQuantity: (productId: string, type: 'buy' | 'rent', quantity: number) => void;
   onCheckout: () => void;
 }
 
@@ -27,7 +29,10 @@ export const CartPreview = ({
   onUpdateQuantity,
   onCheckout 
 }: CartPreviewProps) => {
-  const totalPrice = cartItems.reduce((sum, item) => sum + (item.buyPrice * item.quantity), 0);
+  const totalPrice = cartItems.reduce((sum, item) => {
+    const price = item.type === 'buy' ? item.buyPrice : item.rentPrice;
+    return sum + (price * item.quantity);
+  }, 0);
 
   if (!isOpen) return null;
 
@@ -67,40 +72,52 @@ export const CartPreview = ({
               </div>
             ) : (
               <div className="space-y-4">
-                {cartItems.map((item) => (
-                  <div key={item.id} className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl">
-                    <img 
-                      src={item.image} 
-                      alt={item.name}
-                      className="w-16 h-16 object-cover rounded-lg"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-foreground truncate">{item.name}</h4>
-                      <p className="text-sm text-neon font-semibold">₹{item.buyPrice.toLocaleString()}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <button
-                          onClick={() => onUpdateQuantity(item.id, Math.max(1, item.quantity - 1))}
-                          className="w-6 h-6 rounded-full bg-primary/20 text-primary text-sm flex items-center justify-center hover:bg-primary/30 transition-colors"
-                        >
-                          -
-                        </button>
-                        <span className="text-sm font-medium min-w-[2rem] text-center">{item.quantity}</span>
-                        <button
-                          onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                          className="w-6 h-6 rounded-full bg-primary/20 text-primary text-sm flex items-center justify-center hover:bg-primary/30 transition-colors"
-                        >
-                          +
-                        </button>
+                {cartItems.map((item) => {
+                  const itemPrice = item.type === 'buy' ? item.buyPrice : item.rentPrice;
+                  const priceLabel = item.type === 'buy' ? 'Buy' : 'Rent/day';
+                  const itemKey = `${item.id}-${item.type}`;
+                  
+                  return (
+                    <div key={itemKey} className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl">
+                      <img 
+                        src={item.image} 
+                        alt={item.name}
+                        className="w-16 h-16 object-cover rounded-lg"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-foreground truncate">{item.name}</h4>
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="text-neon font-semibold">₹{itemPrice.toLocaleString()}</span>
+                          <span className="text-muted-foreground">({priceLabel})</span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <button
+                            onClick={() => onUpdateQuantity(item.id, item.type, Math.max(1, item.quantity - 1))}
+                            className="w-6 h-6 rounded-full bg-primary/20 text-primary text-sm flex items-center justify-center hover:bg-primary/30 transition-colors"
+                          >
+                            -
+                          </button>
+                          <span className="text-sm font-medium min-w-[2rem] text-center">{item.quantity}</span>
+                          <button
+                            onClick={() => onUpdateQuantity(item.id, item.type, item.quantity + 1)}
+                            className="w-6 h-6 rounded-full bg-primary/20 text-primary text-sm flex items-center justify-center hover:bg-primary/30 transition-colors"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Subtotal: ₹{(itemPrice * item.quantity).toLocaleString()}
+                        </div>
                       </div>
+                      <button
+                        onClick={() => onRemoveItem(item.id, item.type)}
+                        className="text-destructive hover:text-destructive/80 transition-colors p-2"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
-                    <button
-                      onClick={() => onRemoveItem(item.id)}
-                      className="text-destructive hover:text-destructive/80 transition-colors p-2"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

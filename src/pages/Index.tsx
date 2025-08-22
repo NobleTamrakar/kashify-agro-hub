@@ -27,8 +27,10 @@ interface CartItem {
   id: string;
   name: string;
   buyPrice: number;
+  rentPrice: number;
   image: string;
   quantity: number;
+  type: 'buy' | 'rent'; // Track whether it's for buying or renting
 }
 
 const PRODUCTS: Product[] = [
@@ -122,19 +124,57 @@ const Index = () => {
 
   const handleBuy = (productId: string) => {
     const product = PRODUCTS.find(p => p.id === productId);
+    if (!product) return;
+
+    // Add to cart as buy item
+    addToCart(product, 'buy');
+    
     toast({
-      title: "Purchase Initiated",
-      description: `Processing purchase for ${product?.name}`,
+      title: "Added to Cart for Purchase",
+      description: `${product.name} added for buying at ₹${product.buyPrice.toLocaleString()}`,
       duration: 3000,
     });
   };
 
   const handleRent = (productId: string) => {
     const product = PRODUCTS.find(p => p.id === productId);
+    if (!product) return;
+
+    // Add to cart as rent item
+    addToCart(product, 'rent');
+    
     toast({
-      title: "Rental Request",
-      description: `Rental inquiry sent for ${product?.name}`,
+      title: "Added to Cart for Rental",
+      description: `${product.name} added for renting at ₹${product.rentPrice}/day`,
       duration: 3000,
+    });
+  };
+
+  const addToCart = (product: Product, type: 'buy' | 'rent') => {
+    setCartItems(prev => {
+      // Create a unique key combining product id and type
+      const itemKey = `${product.id}-${type}`;
+      const existingItem = prev.find(item => `${item.id}-${item.type}` === itemKey);
+      
+      if (existingItem) {
+        // If item already exists with same type, increase quantity
+        return prev.map(item =>
+          `${item.id}-${item.type}` === itemKey
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      } else {
+        // Add new item with specified type
+        return [...prev, {
+          id: product.id,
+          name: product.name,
+          buyPrice: product.buyPrice,
+          rentPrice: product.rentPrice,
+          image: product.image,
+          quantity: 1,
+          type: type
+        }];
+      }
     });
   };
 
@@ -142,45 +182,31 @@ const Index = () => {
     const product = PRODUCTS.find(p => p.id === productId);
     if (!product) return;
 
-    setCartItems(prev => {
-      const existingItem = prev.find(item => item.id === productId);
-      if (existingItem) {
-        return prev.map(item =>
-          item.id === productId 
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        return [...prev, {
-          id: product.id,
-          name: product.name,
-          buyPrice: product.buyPrice,
-          image: product.image,
-          quantity: 1
-        }];
-      }
-    });
-
+    // Default to buy when using "Add to Cart" button
+    addToCart(product, 'buy');
+    
     toast({
       title: "Added to Cart",
-      description: `${product?.name} added to your cart`,
+      description: `${product.name} added to cart for purchase`,
       duration: 2000,
     });
   };
 
-  const handleRemoveFromCart = (productId: string) => {
-    setCartItems(prev => prev.filter(item => item.id !== productId));
+  const handleRemoveFromCart = (productId: string, type: 'buy' | 'rent') => {
+    setCartItems(prev => prev.filter(item => !(item.id === productId && item.type === type)));
   };
 
-  const handleUpdateQuantity = (productId: string, quantity: number) => {
+  const handleUpdateQuantity = (productId: string, type: 'buy' | 'rent', quantity: number) => {
     if (quantity === 0) {
-      handleRemoveFromCart(productId);
+      handleRemoveFromCart(productId, type);
       return;
     }
     
     setCartItems(prev =>
       prev.map(item =>
-        item.id === productId ? { ...item, quantity } : item
+        item.id === productId && item.type === type 
+          ? { ...item, quantity } 
+          : item
       )
     );
   };
