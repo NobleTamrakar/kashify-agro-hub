@@ -2,41 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* Kashify Farmer Tools E-commerce Design System
+Dark green + black theme with neon green accents
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Dark agricultural theme */
+    --background: 120 8% 8%;          /* Deep dark green-black */
+    --foreground: 120 15% 92%;        /* Light green-white text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 120 12% 12%;              /* Dark green card background */
+    --card-foreground: 120 15% 92%;   /* Light text on cards */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 120 12% 10%;           /* Darker popover */
+    --popover-foreground: 120 15% 92%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 120 100% 50%;          /* Bright neon green */
+    --primary-foreground: 120 8% 8%;  /* Dark text on neon */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 120 15% 18%;         /* Darker green secondary */
+    --secondary-foreground: 120 15% 92%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 120 10% 15%;            /* Muted dark green */
+    --muted-foreground: 120 8% 65%;  /* Muted text */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 120 80% 45%;           /* Bright accent green */
+    --accent-foreground: 120 8% 8%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;        /* Red for errors */
+    --destructive-foreground: 120 15% 92%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 120 15% 20%;           /* Green borders */
+    --input: 120 12% 15%;            /* Input backgrounds */
+    --ring: 120 100% 50%;            /* Neon green focus rings */
 
-    --radius: 0.5rem;
+    /* Kashify custom tokens */
+    --neon-green: 120 100% 50%;      /* Bright neon green */
+    --neon-glow: 120 100% 50%;       /* For glow effects */
+    --dark-surface: 120 10% 10%;     /* Dark surfaces */
+    --success: 120 60% 50%;          /* Success green */
+    --warning: 45 100% 60%;          /* Warning yellow */
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(120 100% 50%), hsl(120 80% 45%));
+    --gradient-dark: linear-gradient(135deg, hsl(120 8% 8%), hsl(120 12% 12%));
+    
+    /* Shadows and glows */
+    --shadow-neon: 0 0 20px hsl(120 100% 50% / 0.3);
+    --shadow-card: 0 4px 20px hsl(120 8% 4% / 0.5);
+    --glow-intense: 0 0 30px hsl(120 100% 50% / 0.6);
+
+    --radius: 1rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -101,5 +119,51 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Kashify component styles */
+  .btn-neon {
+    @apply bg-primary text-primary-foreground font-semibold px-6 py-2 rounded-xl 
+           transition-all duration-300 hover:shadow-[var(--shadow-neon)] 
+           hover:scale-105 active:scale-95;
+  }
+  
+  .btn-neon-outline {
+    @apply border-2 border-primary text-primary bg-transparent font-semibold 
+           px-6 py-2 rounded-xl transition-all duration-300 
+           hover:bg-primary hover:text-primary-foreground hover:shadow-[var(--shadow-neon)]
+           hover:scale-105 active:scale-95;
+  }
+  
+  .btn-cart {
+    @apply bg-card text-primary font-semibold px-6 py-2 rounded-xl border border-primary
+           transition-all duration-300 hover:bg-primary hover:text-primary-foreground
+           hover:scale-105 active:scale-95;
+  }
+  
+  .card-product {
+    @apply bg-card rounded-2xl p-6 border border-border shadow-[var(--shadow-card)]
+           transition-all duration-300 hover:shadow-[var(--shadow-neon)] hover:scale-105
+           relative overflow-hidden;
+  }
+  
+  .text-neon {
+    @apply text-primary font-bold tracking-wide;
+  }
+  
+  .glow-text {
+    @apply text-primary;
+    text-shadow: 0 0 10px hsl(var(--neon-green) / 0.5);
+  }
+  
+  .heart-favorite {
+    @apply text-muted-foreground hover:text-red-500 transition-colors duration-300
+           cursor-pointer text-xl;
+  }
+  
+  .heart-favorite.active {
+    @apply text-red-500;
   }
 }
